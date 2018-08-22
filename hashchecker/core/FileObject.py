@@ -1,5 +1,5 @@
 import hashlib
-from os import path
+from pathlib import Path
 
 
 class FileObject:
@@ -7,23 +7,20 @@ class FileObject:
     __BLOCKSIZE = 65536
 
     def __init__(self, filepath):
-        if path.exists(filepath):
-            if path.isfile(filepath):
-                self.filepath = filepath
-                self.modified_time = path.getmtime(self.filepath)
-            else:
-                raise IsADirectoryError(filepath+' is not a file!')
-        else:
+        self.path = Path(filepath)
+        if self.path.is_dir():
+            raise IsADirectoryError(filepath+' is not a file!')
+        elif not self.path.exists():    
             raise FileNotFoundError('File named '+filepath+' not found!')
 
     def get_name(self):
-        return path.basename(self.filepath)
+        return self.path.name
 
     def get_size(self):
-        return path.getsize(self.filepath)
+        return self.path.stat().st_size
 
     def get_path(self):
-        return self.filepath
+        return self.path.absolute()
 
     def md5(self):
         hasher = hashlib.md5()
@@ -42,7 +39,7 @@ class FileObject:
         return self.__find_checksum(hasher)
 
     def __find_checksum(self, hasher):
-        with open(self.filepath, 'rb') as file_handle:
+        with open(self.get_path(), 'rb') as file_handle:
             buffer = file_handle.read(self.__BLOCKSIZE)
             while len(buffer) > 0:
                 hasher.update(buffer)
@@ -70,6 +67,5 @@ class FileObject:
         sha1 = self.sha1()
         sha256 = self.sha256()
         sha512 = self.sha512()
-        return path.basename(
-            self.filepath)+'\n\n'+'MD5    : '+md5 + \
+        return self.get_name()+'\n\n'+'MD5    : '+md5 + \
             '\nSHA1   : '+sha1 + '\nSHA256 : '+sha256 + '\nSHA512 : '+sha512
