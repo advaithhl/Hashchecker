@@ -23,7 +23,7 @@ class ArgParse:
         )
 
         self.__main_action_group.add_argument(
-            '-r', '--redundancy',
+            '-d', '--duplicate',
             help='Check if any of the given files are duplicates of one another',
             nargs='+'
         )
