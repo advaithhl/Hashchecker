@@ -3,11 +3,6 @@ from hashchecker.io.parsing.ArgParse import ArgParse
 
 from collections import defaultdict
 
-def get_file_objects():
-    file_list = ArgParse().args.duplicate
-    if file_list:
-        return (FileObject(file) for file in file_list)
-
 
 def get_duplicates():
     hashdict = defaultdict(lambda:list())
