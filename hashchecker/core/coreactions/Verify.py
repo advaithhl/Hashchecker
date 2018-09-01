@@ -1,4 +1,3 @@
-from hashchecker.core.FileObject import FileObject
 from hashchecker.io.parsing.FileObjectParser import FileObjectParser
 
 

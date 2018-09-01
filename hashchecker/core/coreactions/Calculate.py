@@ -1,4 +1,5 @@
 from threading import Thread
+
 from hashchecker.io.parsing.FileObjectParser import FileObjectParser
 
 
