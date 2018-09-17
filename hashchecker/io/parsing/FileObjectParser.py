@@ -1,11 +1,11 @@
 from hashchecker.core.FileObject import FileObject
-from hashchecker.io.parsing.ArgParse import ArgParse
+from hashchecker.io.parsing.ArgParse import parsed_files
 
 
 class FileObjectParser:
 
     def __init__(self):
-        self.__args = ArgParse().args
+        self.__args = parsed_files()
 
     def __get_file_list(self):
         if self.__args.verify:

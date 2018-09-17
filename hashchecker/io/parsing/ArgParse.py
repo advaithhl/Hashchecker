@@ -1,40 +1,41 @@
-import argparse
+import click
+
+__parsed_files = None
+__hash_types = None
 
 
-class ArgParse:
+@click.group()
+def main_action():
+    pass
 
-    def __init__(self):
-        self.parser = argparse.ArgumentParser(
-            description='Description'
-        )
 
-        self.__main_action_group = self.parser.add_mutually_exclusive_group()
+@main_action.command()
+@click.argument('files', nargs=-1)
+def verify(files):
+    global __parsed_file
+    __parsed_file = files
 
-        self.__main_action_group.add_argument(
-            '-v', '--verify',
-            help='Verify files checksums',
-            nargs='+'
-        )
 
-        self.__main_action_group.add_argument(
-            '-c', '--calculate',
-            help='Calculate file checksums',
-            nargs='+'
-        )
+@main_action.command()
+@click.argument('files', nargs=-1)
+def duplicate(files):
+    global __parsed_file
+    __parsed_file = files
 
-        self.__main_action_group.add_argument(
-            '-d', '--duplicate',
-            help='Check if any of the given files are duplicates of one another',
-            nargs='+'
-        )
 
-        self.__output_group = self.parser.add_argument_group()
-        self.__output_group.add_argument(
-            '-o', '--output',
-            help='Output results to file',
-            nargs='?',
-            const='CHECKSUMS',
-            type=argparse.FileType('w')
-        )
+@main_action.command()
+@click.argument('files', nargs=-1)
+@click.option('-h', '--hashtype', multiple=True, type=click.Choice(['md5', 'sha1', 'sha256', 'sha512']))
+def calculate(files, hashtype):
+    global __parsed_file
+    __parsed_file = files
+    global __hash_types
+    __hash_types = hashtype
 
-        self.args = self.parser.parse_args()
+
+def parsed_files():
+    return __parsed_files
+
+
+def hash_types():
+    return __hash_types
