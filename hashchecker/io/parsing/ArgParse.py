@@ -1,7 +1,26 @@
 import click
+from threading import Thread
 
-__parsed_files = None
-__hash_types = None
+
+class ArgParse:
+
+    def __init__(self,
+                 action=None,
+                 parsed_files=None,
+                 hashtypes=None):
+        self.main_action = action
+        self.parsed_files = parsed_files
+        self.hashtypes = hashtypes
+
+
+args = ArgParse()
+
+
+def parse_args():
+    t = Thread(target=main_action)
+    t.start()
+    t.join()
+    return args
 
 
 @click.group()
@@ -12,30 +31,27 @@ def main_action():
 @main_action.command()
 @click.argument('files', nargs=-1)
 def verify(files):
-    global __parsed_file
-    __parsed_file = files
+    return ArgParse(action=verify,
+                    parsed_files=files)
 
 
 @main_action.command()
 @click.argument('files', nargs=-1)
 def duplicate(files):
-    global __parsed_file
-    __parsed_file = files
+    return ArgParse(action=duplicate,
+                    parsed_files=files)
 
 
 @main_action.command()
 @click.argument('files', nargs=-1)
 @click.option('-h', '--hashtype', multiple=True, type=click.Choice(['md5', 'sha1', 'sha256', 'sha512']))
 def calculate(files, hashtype):
-    global __parsed_file
-    __parsed_file = files
-    global __hash_types
-    __hash_types = hashtype
+    return ArgParse(action=calculate,
+                    parsed_files=files,
+                    hashtypes=hashtype)
 
 
-def parsed_files():
-    return __parsed_files
-
-
-def hash_types():
-    return __hash_types
+@main_action.resultcallback()
+def process_results(result):
+    global args
+    args = result

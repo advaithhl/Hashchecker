@@ -1,19 +1,14 @@
 from hashchecker.core.FileObject import FileObject
-from hashchecker.io.parsing.ArgParse import parsed_files
+from hashchecker.io.parsing.ArgParse import parse_args
 
 
 class FileObjectParser:
 
     def __init__(self):
-        self.__args = parsed_files()
+        self.__args = parse_args()
 
     def __get_file_list(self):
-        if self.__args.verify:
-            return self.__args.verify
-        elif self.__args.calculate:
-            return self.__args.calculate
-        elif self.__args.duplicate:
-            return self.__args.duplicate
+        return self.__args.parsed_files
 
     def get_file_objects(self):
         return (FileObject(file) for file in self.__get_file_list())
