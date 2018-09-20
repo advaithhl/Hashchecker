@@ -1,49 +1,70 @@
 from threading import Thread
 
+from hashchecker.io.parsing.ArgParse import parse_args
 from hashchecker.io.parsing.FileObjectParser import FileObjectParser
 
 
+class ChecksumResult:
+    def __init__(self, file_object):
+        self.file_object = file_object
+        self.md5 = None
+        self.sha1 = None
+        self.sha256 = None
+        self.sha512 = None
+
+    def __str__(self):
+        return self.file_object.get_name() + '\n' \
+            + 'md5: ' + self.md5 + '\n' \
+            + 'sha1: ' + self.sha1
+
+
 class Calculate:
-    # FIXME: sloppy code; make this independent of interface
 
     def __init__(self):
         self.__parsed_objs = FileObjectParser().get_file_objects()
+        self.__hashtypes = parse_args().hashtypes
         self.__threads = list()
 
-    def __call_md5(self, file_object):
-        print('\n\rMD5 : (calculating)', end='')
-        print('\rMD5 : ' + file_object.md5(), end='')
+    @staticmethod
+    def md5(file_object, result):
+        result.md5 = file_object.md5()
 
-    def __call_sha1(self, file_object):
-        print('\n\rSHA 1 : (calculating)', end='')
-        print('\rSHA 1 : ' + file_object.sha1(), end='')
+    @staticmethod
+    def sha1(file_object, result):
+        result.sha1 = file_object.sha1()
 
-    def __call_sha256(self, file_object):
-        print('\n\rSHA 256 : (calculating)', end='')
-        print('\rSHA 256 : ' + file_object.sha256(), end='')
+    @staticmethod
+    def sha256(file_object, result):
+        result.sha256 = file_object.sha256()
 
-    def __call_sha512(self, file_object):
-        print('\n\rSHA 512 : (calculating)', end='')
-        print('\rSHA 512 : ' + file_object.sha512(), end='')
+    @staticmethod
+    def sha512(file_object, result):
+        result.sha512 = file_object.sha512()
 
-    def calculate_all(self):
+    @staticmethod
+    def __add_thread(threads, hash_function, file_object, result):
+        threads.append(Thread(target=hash_function, args=(file_object, result, )))
+
+    @staticmethod
+    def __start_threads(threads):
+        for thread in threads:
+            thread.start()
+
+    @staticmethod
+    def __join_thread(threads):
+        for thread in threads:
+            thread.join()
+
+    def __calculate(self, file_object, hashtypes):
+        result = ChecksumResult(file_object)
+        threads = []
+        for hashtype in hashtypes:
+            self.__add_thread(threads, hashtype, file_object, result)
+
+        self.__start_threads(threads)
+        self.__join_thread(threads)
+        return result
+
+    def calculate(self, hashtypes):
         for file_object in self.__parsed_objs:
-            threads = []
-            print('\n\n' + file_object.get_name())
-            md5_thread = Thread(target=self.__call_md5, args=(file_object, ))
-            threads.append(md5_thread)
-
-            sha1_thread = Thread(target=self.__call_sha1, args=(file_object, ))
-            threads.append(sha1_thread)
-
-            sha256_thread = Thread(target=self.__call_sha256, args=(file_object, ))
-            threads.append(sha256_thread)
-
-            sha512_thread = Thread(target=self.__call_sha512, args=(file_object, ))
-            threads.append(sha512_thread)
-
-            for thread in threads:
-                thread.start()
-                thread.join()
-
-        print('\n')
+            yield self.__calculate(file_object, hashtypes)
