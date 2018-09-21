@@ -1,5 +1,6 @@
-import click
 from threading import Thread
+
+import click
 
 
 class ArgParse:

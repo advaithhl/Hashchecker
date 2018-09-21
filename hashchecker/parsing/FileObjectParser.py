@@ -1,5 +1,5 @@
 from hashchecker.core.FileObject import FileObject
-from hashchecker.io.parsing.ArgParse import parse_args
+from hashchecker.parsing.ArgParse import parse_args
 
 
 class FileObjectParser:
