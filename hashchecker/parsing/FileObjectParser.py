@@ -7,6 +7,10 @@ class FileObjectParser:
     def __init__(self):
         self.__args = parse_args()
 
+    @property
+    def action_name(self):
+        return self.__args.main_action.name
+
     def __get_file_list(self):
         return self.__args.parsed_files
 
