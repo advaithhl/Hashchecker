@@ -6,6 +6,10 @@ def blue(string):
     print(bgc.BLUE + string + bgc.RESET)
 
 
+def green(string):
+    print(bgc.GREEN + string + bgc.RESET)
+
+
 def red(string):
     print(bgc.RED + string + bgc.RESET)
 
