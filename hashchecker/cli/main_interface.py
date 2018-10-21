@@ -52,3 +52,17 @@ def calculate_cli(args):
             result.sha256,
             result.sha512
         ))
+
+def duplicate_cli(args):
+    d = Duplicate()
+    duplicate_count = len(d.get_duplicates())
+    if duplicate_count:
+        print(red('\nI found {} files which have duplicate copies'.format(duplicate_count)))    
+    else:
+        print(green('\nNo duplicate files found.'))
+        exit()
+    
+    for (count, duplicate_list) in enumerate(d.get_duplicates()):
+        print(blue('\nDuplicates #{}'.format(count+1)))
+        for file_name in duplicate_list:
+            print('+', file_name)
