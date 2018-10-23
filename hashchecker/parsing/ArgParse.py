@@ -30,21 +30,21 @@ def main_action():
 
 
 @main_action.command()
-@click.argument('files', nargs=-1)
+@click.argument('files', nargs=-1, required=True)
 def verify(files):
     return ArgParse(action=verify,
                     parsed_files=files)
 
 
 @main_action.command()
-@click.argument('files', nargs=-1)
+@click.argument('files', nargs=-1, required=True)
 def duplicate(files):
     return ArgParse(action=duplicate,
                     parsed_files=files)
 
 
 @main_action.command()
-@click.argument('files', nargs=-1)
+@click.argument('files', nargs=-1, required=True)
 @click.option('-h', '--hashtype', multiple=True, type=click.Choice(['md5', 'sha1', 'sha256', 'sha512']))
 def calculate(files, hashtype):
     return ArgParse(action=calculate,
