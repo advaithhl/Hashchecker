@@ -16,7 +16,7 @@ def perform(args: FileObjectParser):
 
 def verify_cli(args):
     hash_dict = {}
-    v = Verify()
+    v = Verify(args)
     print('Please enter the checksums of the files below')
     for file_object in args.get_file_objects():
         hash_dict[file_object] = input(file_object.get_name()+': ')
@@ -33,7 +33,7 @@ def verify_cli(args):
 
 def calculate_cli(args):
     hashtypes = []
-    for hashtype in parse_args().hashtypes:
+    for hashtype in args.parsed_args.hashtypes:
         if hashtype == 'md5':
             hashtypes.append(Calculate.md5)
         elif hashtype == 'sha1':
@@ -43,7 +43,7 @@ def calculate_cli(args):
         elif hashtype == 'sha512':
             hashtypes.append(Calculate.sha512)
 
-    c = Calculate()
+    c = Calculate(args)
     for result in c.calculate(hashtypes):
         print('file: {}\n+ md5: {}\n+ sha1: {}\n+ sha256: {}\n+ sha512: {}'.format(
             blue(result.file_object.get_name()),
@@ -54,15 +54,16 @@ def calculate_cli(args):
         ))
 
 def duplicate_cli(args):
-    d = Duplicate()
-    duplicate_count = len(d.get_duplicates())
+    d = Duplicate(args)
+    duplicates = d.get_duplicates()
+    duplicate_count = len(duplicates)
     if duplicate_count:
         print('\n' + red('I found {} files which have duplicate copies'.format(duplicate_count)))    
     else:
         print('\n' + green('No duplicate files found.'))
         exit()
     
-    for (count, duplicate_list) in enumerate(d.get_duplicates()):
+    for (count, duplicate_list) in enumerate(duplicates):
         print('\n' + blue('Duplicates #{}'.format(count+1)))
         for file_name in duplicate_list:
             print('+', file_name)

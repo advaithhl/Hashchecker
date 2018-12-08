@@ -3,8 +3,8 @@ from hashchecker.parsing.FileObjectParser import FileObjectParser
 
 class Verify:
 
-    def __init__(self):
-        self.__parsed_objs = FileObjectParser().get_file_objects()
+    def __init__(self, args: FileObjectParser):
+        self.__args = args
         self.__result = dict()
         # TODO: parse checksum data from file
 
