@@ -70,5 +70,8 @@ class FileObject:
         return self.get_name()+'\n\n'+'MD5    : '+md5 + \
             '\nSHA1   : '+sha1 + '\nSHA256 : '+sha256 + '\nSHA512 : '+sha512
 
+    def __repr__(self):
+        return self.get_name()
+
     def __hash__(self):
         return super.__hash__(self)
