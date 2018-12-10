@@ -10,7 +10,7 @@ class Duplicate:
         self.__duplicates = list()
 
     def __get_same_size(self):
-        size_dict = defaultdict(lambda: list())
+        size_dict = defaultdict(list)
 
         for file_object in self.__args.get_file_objects():
             size = file_object.get_size()
