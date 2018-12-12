@@ -20,9 +20,9 @@ class ChecksumResult:
 
 class Calculate:
 
-    def __init__(self):
-        self.__parsed_objs = FileObjectParser().get_file_objects()
-        self.__hashtypes = parse_args().hashtypes
+    def __init__(self, args:FileObjectParser):
+        self.__args = args
+        self.__hashtypes = args.parsed_args.hashtypes
         self.__threads = list()
 
     @staticmethod
@@ -66,5 +66,5 @@ class Calculate:
         return result
 
     def calculate(self, hashtypes):
-        for file_object in self.__parsed_objs:
+        for file_object in self.__args.get_file_objects():
             yield self.__calculate(file_object, hashtypes)

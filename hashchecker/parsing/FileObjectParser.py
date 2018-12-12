@@ -11,6 +11,10 @@ class FileObjectParser:
     def action_name(self):
         return self.__args.main_action.name
 
+    @property
+    def parsed_args(self):
+        return self.__args
+
     def __get_file_list(self):
         return self.__args.parsed_files
 
