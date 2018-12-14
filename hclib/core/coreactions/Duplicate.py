@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-from hashchecker.parsing.FileObjectParser import FileObjectParser
+from hclib.parsing.FileObjectParser import FileObjectParser
 
 
 class Duplicate:

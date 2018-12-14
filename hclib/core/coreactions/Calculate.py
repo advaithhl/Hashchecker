@@ -1,7 +1,7 @@
 from threading import Thread
 
-from hashchecker.parsing.ArgParse import parse_args
-from hashchecker.parsing.FileObjectParser import FileObjectParser
+from hclib.parsing.ArgParse import parse_args
+from hclib.parsing.FileObjectParser import FileObjectParser
 
 
 class ChecksumResult:

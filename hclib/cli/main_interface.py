@@ -1,9 +1,9 @@
-from hashchecker.core.coreactions.Calculate import Calculate
-from hashchecker.core.coreactions.Duplicate import Duplicate
-from hashchecker.core.coreactions.Verify import Verify
-from hashchecker.parsing.ArgParse import parse_args
-from hashchecker.parsing.FileObjectParser import FileObjectParser
-from hashchecker.cli.color_string import *
+from hclib.core.coreactions.Calculate import Calculate
+from hclib.core.coreactions.Duplicate import Duplicate
+from hclib.core.coreactions.Verify import Verify
+from hclib.parsing.ArgParse import parse_args
+from hclib.parsing.FileObjectParser import FileObjectParser
+from hclib.cli.color_string import *
 
 def perform(args: FileObjectParser): 
     if args.action_name == 'verify':

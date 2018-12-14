@@ -1,4 +1,4 @@
-from hashchecker.parsing.FileObjectParser import FileObjectParser
+from hclib.parsing.FileObjectParser import FileObjectParser
 
 
 class Verify:
