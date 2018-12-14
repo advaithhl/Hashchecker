@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+
+from hclib.cli.main_interface import perform
+from hclib.parsing.FileObjectParser import FileObjectParser
+
+if __name__ == '__main__':
+    p = FileObjectParser()
+    perform(p)
