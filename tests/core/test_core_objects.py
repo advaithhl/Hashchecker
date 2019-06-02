@@ -1,7 +1,7 @@
 import unittest
 from os import path as os_path
 
-from core.core_objects import FileObject, FileSystemObject
+from core.core_objects import DirectoryObject, FileObject, FileSystemObject
 
 
 class TestFileSystemObject(unittest.TestCase):
@@ -63,3 +63,19 @@ class TestFileObject(unittest.TestCase):
                          '8134ede695e2238e6afcee3b405845b2e543991a3dc29d3dc1793b4cfa77')
         with self.assertRaises(FileNotFoundError):
             self.non_existent_fobject.sha512()
+
+
+class TestDirectoryObject(unittest.TestCase):
+    def setUp(self):
+        self.dobject = DirectoryObject(
+            'tests/hashchecker_test_files/test_directory')
+        self.non_existent_dobject = DirectoryObject('spam')
+
+    def test_size(self):
+        self.assertEqual(self.dobject.size, 64)
+        self.assertEqual(self.non_existent_dobject.size, 0)
+
+    def test_empty(self):
+        self.assertFalse(self.dobject.empty)
+        with self.assertRaises(FileNotFoundError):
+            self.non_existent_dobject.empty

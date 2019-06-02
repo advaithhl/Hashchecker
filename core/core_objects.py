@@ -1,5 +1,9 @@
 import hashlib
+from os import listdir as os_listdir
 from os import path as os_path
+from os import walk as os_walk
+
+from core.exceptions import IsAFileError
 
 CHECKSUMS = (
     'MD5',
@@ -86,3 +90,48 @@ class FileObject(FileSystemObject):
                 buffer = file_handle.read(self._BLOCKSIZE)
 
         return hasher.hexdigest()
+
+
+class DirectoryObject(FileSystemObject):
+    """
+    Represents a directory of files.
+
+    :inherits: FileSystemObject
+    """
+
+    def __init__(self, dirpath):
+        super().__init__(dirpath)
+        if os_path.isfile(dirpath):
+            raise IsAFileError(dirpath + 'is a directory!')
+
+    @property
+    def size(self):
+        """
+        Return the total size (bytes) of all files in the directory.
+        Courtesy: https://stackoverflow.com/a/1392549
+        """
+        total_size = 0
+        for dpath, dnames, filenames in os_walk(self.path):
+            for f in filenames:
+                fp = os_path.join(dpath, f)
+                # skip if it is symbolic link
+                if not os_path.islink(fp):
+                    total_size += os_path.getsize(fp)
+        return total_size
+
+    @property
+    def empty(self):
+        """ Checks whether a directory is empty. """
+        return not os_listdir(self.path)
+
+    def file_objects(self):
+        """ Return FileObject generator of every file in this directory. """
+        return (FileObject(os_path.join(self.path, fs_object))
+                for fs_object in os_listdir(self.path)
+                if os_path.isfile(os_path.join(self.path, fs_object)))
+
+    def directory_objects(self):
+        """ Return DirectoryObject generator of every subdirectory. """
+        return (DirectoryObject(os_path.join(self.path, fs_object))
+                for fs_object in os_listdir(self.path)
+                if os_path.isdir(os_path.join(self.path, fs_object)))

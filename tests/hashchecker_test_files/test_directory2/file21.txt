@@ -1,0 +1,1 @@
+Just a random file under 'test_directory2' for testing purposes.
