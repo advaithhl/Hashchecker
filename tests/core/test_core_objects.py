@@ -26,6 +26,13 @@ class TestFileSystemObject(unittest.TestCase):
         self.assertTrue(self.fsobject2.exists)
         self.assertFalse(self.non_existent_fsobject.exists)
 
+    def test_repr(self):
+        self.assertEqual(str(self.fsobject1), 'file_with_some_text.txt')
+
+    def test_str(self):
+        self.assertEqual(str(self.fsobject1), 'file_with_some_text.txt')
+
+
 
 class TestFileObject(unittest.TestCase):
     def setUp(self):

@@ -23,6 +23,12 @@ class FileSystemObject:
     def __init__(self, fspath):
         self.fspath = fspath
 
+    def __repr__(self):
+        return str(self)
+
+    def __str__(self):
+        return self.name
+
     @property
     def name(self) -> str:
         """ Return the name of the filesystem """
