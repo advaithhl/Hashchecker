@@ -76,6 +76,8 @@ class TestDirectoryObject(unittest.TestCase):
     def setUp(self):
         self.dobject = DirectoryObject(
             'tests/hashchecker_test_files/test_directory')
+        self.hidden_test_dir = DirectoryObject(
+            'tests/hashchecker_test_files/hidden_test_dir')
         self.non_existent_dobject = DirectoryObject('spam')
 
     def test_size(self):
@@ -86,3 +88,15 @@ class TestDirectoryObject(unittest.TestCase):
         self.assertFalse(self.dobject.empty)
         with self.assertRaises(FileNotFoundError):
             self.non_existent_dobject.empty
+
+    def test_file_objects(self):
+        self.assertEqual(
+            len(list(self.hidden_test_dir.file_objects())), 2)
+        self.assertEqual(
+            len(list(self.hidden_test_dir.file_objects(True))), 3)
+
+    def test_directory_objects(self):
+        self.assertEqual(
+            len(list(self.hidden_test_dir.directory_objects())), 2)
+        self.assertEqual(
+            len(list(self.hidden_test_dir.directory_objects(True))), 3)

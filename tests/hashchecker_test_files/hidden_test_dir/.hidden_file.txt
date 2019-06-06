@@ -1,0 +1,3 @@
+This is a hidden text file.
+The reason you can say this is hidden is because it has DOT at the beginning of
+the filename.
