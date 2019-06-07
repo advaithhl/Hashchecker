@@ -33,7 +33,6 @@ class TestFileSystemObject(unittest.TestCase):
         self.assertEqual(str(self.fsobject1), 'file_with_some_text.txt')
 
 
-
 class TestFileObject(unittest.TestCase):
     def setUp(self):
         self.fobject = FileObject(
@@ -92,8 +91,11 @@ class TestDirectoryObject(unittest.TestCase):
     def test_file_objects(self):
         self.assertEqual(
             len(list(self.hidden_test_dir.file_objects())), 2)
-        self.assertEqual(
-            len(list(self.hidden_test_dir.file_objects(True))), 3)
+        # .DS_Store in Macs will lead to another discovered hidden file.
+        l = list(self.hidden_test_dir.file_objects(True))
+        # Removing the .DS_Store file, if any, to make the test generalised.
+        l = [file_object for file_object in l if file_object.name != '.DS_Store']
+        self.assertEqual(len(l), 3)
 
     def test_directory_objects(self):
         self.assertEqual(
