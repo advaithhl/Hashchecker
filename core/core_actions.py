@@ -1,5 +1,8 @@
 import hashlib
 
+from core.core_objects import DirectoryObject
+from core.utils import BST
+
 
 def calculate(file_objects, checksum):
     """
@@ -49,3 +52,35 @@ def verify(file_objects, correct_checksums) -> dict:
         f: f._find_checksum(hashers[len(c)]) == c
         for (f, c) in zip(file_objects, correct_checksums)
     }
+
+
+def find_duplicates(fs):
+    """
+    Find duplicate files.
+
+    A file2 is a duplicate/copy of file1 if they have the same cryptographic
+    hash. However, instead of comparing hashes of each and every single file
+    with each and every other file, we first compare the sizes of file1 and
+    file2, i.e., the hashes (SHA1) of file1 and file2 are computed and
+    calculated if and only if their file sizes are the same. This brings down
+    reduntant checksum calculations to nearly none.
+
+    For comparing the file sizes, a modified BST is used. Refer
+    `core.utils.BST`.
+
+    Params
+    ------
+
+    `fs`:  A list of FileObjects OR a DirectoryObject.
+    """
+    if isinstance(fs, DirectoryObject):
+        fs = list(fs.file_objects(show_hidden=True))
+
+    duplicates = []
+    t = BST(fs[0])
+    for f in fs[1:]:
+        d = t.insert(f)
+        if d:
+            if d[0].sha1() == d[1].sha1():
+                duplicates.append(d)
+    return duplicates
