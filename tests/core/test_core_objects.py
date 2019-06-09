@@ -32,6 +32,20 @@ class TestFileSystemObject(unittest.TestCase):
     def test_str(self):
         self.assertEqual(str(self.fsobject1), 'file_with_some_text.txt')
 
+    def test_eq(self):
+        self.assertEqual(self.fsobject1, FileObject(
+            'tests/hashchecker_test_files/file_with_some_text.txt'))
+        self.assertNotEqual(self.fsobject1, self.fsobject2)
+
+    def test_hash(self):
+        self.assertEqual(
+            hash(self.fsobject1),
+            hash(FileObject(
+                'tests/hashchecker_test_files/file_with_some_text.txt'
+            ))
+        )
+        self.assertNotEqual(hash(self.fsobject1), hash(self.fsobject2))
+
 
 class TestFileObject(unittest.TestCase):
     def setUp(self):

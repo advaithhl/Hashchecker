@@ -44,6 +44,15 @@ class FileSystemObject:
         """ Return whether the filesystem object exists """
         return os_path.exists(self.fspath)
 
+    def __eq__(self, other):
+        """ Two FileSystemObjects are equal if they point to the same path """
+        if isinstance(other, FileSystemObject):
+            return self.path == other.path
+        return False
+
+    def __hash__(self):
+        return hash(self.path)
+
 
 class FileObject(FileSystemObject):
     """
