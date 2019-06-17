@@ -5,12 +5,12 @@ from os import walk as os_walk
 
 from core.exceptions import IsAFileError
 
-CHECKSUMS = (
-    'MD5',
-    'SHA1',
-    'SHA256',
-    'SHA512',
-)
+CHECKSUMS = [
+    'md5',
+    'sha1',
+    'sha256',
+    'sha512',
+]
 
 
 class FileSystemObject:
