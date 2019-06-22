@@ -39,7 +39,7 @@ class TestActions(unittest.TestCase):
         self.assertFalse(result[self.file2])
         self.assertTrue(result[self.file3])
         # Checking for invalid hash
-        with self.assertRaises(KeyError):
+        with self.assertRaises(ValueError):
             verify(
                 [self.file1],
                 'i am a fake checksum having length not matching any of the '

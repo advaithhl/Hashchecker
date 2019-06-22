@@ -15,9 +15,8 @@ def calculate(file_objects, checksum):
 
     `checksum`:  Hash function to use for checksum calculation.
     """
-    hasher = hashlib.new(checksum)
     return {
-        f: f._find_checksum(hasher)
+        f: f._find_checksum(hashlib.new(checksum))
         for f in file_objects
     }
 
@@ -42,14 +41,20 @@ def verify(file_objects, correct_checksums) -> dict:
     `correct_checksums`:  List of correct/valid checksums corresponding to each
     `file_object`.
     """
-    hashers = {
-        32: hashlib.new('md5'),
-        40: hashlib.new('sha1'),
-        64: hashlib.new('sha256'),
-        128: hashlib.new('sha512'),
-    }
+    def get_hasher(l):
+        if l == 32:
+            return hashlib.new('md5')
+        elif l == 40:
+            return hashlib.new('sha1')
+        elif l == 64:
+            return hashlib.new('sha256')
+        elif l == 128:
+            return hashlib.new('sha512')
+        else:
+            raise ValueError('Input format does not match known checksums.')
+
     return {
-        f: f._find_checksum(hashers[len(c)]) == c
+        f: f._find_checksum(get_hasher(len(c))) == c
         for (f, c) in zip(file_objects, correct_checksums)
     }
 
