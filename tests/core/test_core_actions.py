@@ -46,17 +46,17 @@ class TestActions(unittest.TestCase):
                 'known checksums.')
 
     def test_find_duplicates(self):
-        self.assertListEqual(
-            find_duplicates(self.directory),
-            [[self.file2, self.file1]]
+        self.assertDictEqual(
+            dict(find_duplicates(self.directory)),
+            {self.file2: [self.file1]}
         )
-        self.assertListEqual(
-            find_duplicates([
+        self.assertDictEqual(
+            dict(find_duplicates([
                 self.file1,
                 self.file2,
                 self.file3,
-            ]),
-            [[self.file1, self.file2]]
+            ])),
+            {self.file1: [self.file2]}
         )
         # Raises FileNotFoundError on non existent file
         with self.assertRaises(FileNotFoundError):

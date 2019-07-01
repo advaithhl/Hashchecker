@@ -1,4 +1,5 @@
 import hashlib
+from collections import defaultdict
 
 from core.core_objects import DirectoryObject
 from core.utils import BST
@@ -78,14 +79,16 @@ def find_duplicates(fs):
 
     `fs`:  A list of FileObjects OR a DirectoryObject.
     """
+    duplicates = defaultdict(list)
     if isinstance(fs, DirectoryObject):
         fs = list(fs.file_objects(show_hidden=True))
+        if not fs:
+            return duplicates
 
-    duplicates = []
     t = BST(fs[0])
     for f in fs[1:]:
         d = t.insert(f)
         if d:
             if d[0].sha1() == d[1].sha1():
-                duplicates.append(d)
+                duplicates[d[0]].append(d[1])
     return duplicates
