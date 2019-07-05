@@ -1,7 +1,7 @@
 import unittest
 
-from core.core_actions import calculate, find_duplicates, verify
-from core.core_objects import DirectoryObject, FileObject
+from hclib.core.core_actions import calculate, find_duplicates, verify
+from hclib.core.core_objects import DirectoryObject, FileObject
 
 
 class TestActions(unittest.TestCase):

@@ -1,7 +1,7 @@
 import unittest
 from os import path as os_path
 
-from core.core_objects import DirectoryObject, FileObject, FileSystemObject
+from hclib.core.core_objects import DirectoryObject, FileObject, FileSystemObject
 
 
 class TestFileSystemObject(unittest.TestCase):

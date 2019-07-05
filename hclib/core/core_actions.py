@@ -1,8 +1,8 @@
 import hashlib
 from collections import defaultdict
 
-from core.core_objects import DirectoryObject
-from core.utils import BST
+from hclib.core.core_objects import DirectoryObject
+from hclib.core.utils import BST
 
 
 def calculate(file_objects, checksum):

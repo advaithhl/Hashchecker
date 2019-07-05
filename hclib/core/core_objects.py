@@ -3,7 +3,7 @@ from os import listdir as os_listdir
 from os import path as os_path
 from os import walk as os_walk
 
-from core.exceptions import IsAFileError
+from hclib.core.exceptions import IsAFileError
 
 CHECKSUMS = [
     'md5',
