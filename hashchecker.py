@@ -123,6 +123,8 @@ def cli_verify(arg_list):
             correct_checksums.append(c)
         except IsADirectoryError as iade:
             print(iade)
+    if not l:
+        exit(1)
     print('\n+ Verifying... ', end='', flush=True)
     result = verify(l, correct_checksums)
     print('Done!')
@@ -180,6 +182,8 @@ def cli_find_duplicates(arg_list, directory):
                     print(f"- I did not find a file named '{arg}'")
                     continue
                 list_of_file_objects.append(f)
+            if not list_of_file_objects:
+                exit(1)
             duplicates = find_duplicates(list_of_file_objects)
         except IsADirectoryError as iade:
             print(f'? Sorry, but {iade}\n'
