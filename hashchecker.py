@@ -203,6 +203,3 @@ def cli_find_duplicates(arg_list, directory):
         }
         print('\n+ File: ', file_object.path)
         print(tabulate(table.items(), headers, tablefmt="fancy_grid"))
-
-
-cli()
