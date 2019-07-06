@@ -21,7 +21,19 @@ Why summon a fancy application, when you can simply open up the terminal and sum
 
 ## Installation
 
-*Hashchecker has not yet been published to PyPI. Will update soon.*
+You can install Hashchecker using `pip`:
+
+`$ pip3 install --upgrade hashchecker`
+
+Additionally, you may consider using the `--user` option.
+
+## Requirements
+
++ [Click][3]: Command line parsing.
+
++ [Colorama][4]: Coloring text wherever necessary.
+
++ [Tabulate][5]: Displaying results in tabular format.
 
 ## Get involved
 
@@ -31,3 +43,6 @@ Have ideas to make Hashchecker better? Fork us!
 [0]: https://en.wikipedia.org/wiki/Checksum
 [1]: https://en.wikipedia.org/wiki/File_integrity_monitoring
 [2]: https://docs.python.org/3/library/hashlib.html
+[3]: https://github.com/pallets/click/
+[4]: https://github.com/tartley/colorama
+[5]: https://bitbucket.org/astanin/python-tabulate/src/master/
