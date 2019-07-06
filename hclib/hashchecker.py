@@ -6,7 +6,7 @@ import click
 from colorama import Fore as fgc
 from tabulate import tabulate
 
-import help_strings as hs
+import hclib.help_strings as hs
 from hclib.core.core_actions import calculate, find_duplicates, verify
 from hclib.core.core_objects import CHECKSUMS, DirectoryObject, FileObject
 
