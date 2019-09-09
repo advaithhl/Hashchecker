@@ -1,7 +1,10 @@
 import hashlib
+import random
+import string
 from collections import defaultdict
+from tempfile import NamedTemporaryFile
 
-from hclib.core.core_objects import DirectoryObject
+from hclib.core.core_objects import DirectoryObject, FileObject
 from hclib.core.utils import BST
 
 
@@ -60,7 +63,7 @@ def verify(file_objects, correct_checksums) -> dict:
     }
 
 
-def find_duplicates(fs):
+def find_duplicates(file_objects, directory_objects):
     """
     Find duplicate files.
 
@@ -74,21 +77,31 @@ def find_duplicates(fs):
     For comparing the file sizes, a modified BST is used. Refer
     `core.utils.BST`.
 
+    We add `FileObjects` from file_objects and those found by performing DFS on
+    directories in direcory_objects. All files in all directories are thus added
+    and compared recursively.
+
     Params
     ------
 
-    `fs`:  A list of FileObjects OR a DirectoryObject.
+    `file_objects`:         A list of `FileObject`s
+    `directory_objects`:    A list of `DirectoryObject`s
     """
     duplicates = defaultdict(list)
-    if isinstance(fs, DirectoryObject):
-        fs = list(fs.file_objects(show_hidden=True))
-        if not fs:
-            return duplicates
+    with NamedTemporaryFile(delete=True) as dummy_file:
+        t = BST(FileObject(dummy_file.name))
+        for file_object in file_objects:
+            d = t.insert(file_object)
+            if d:
+                if d[0].sha1() == d[1].sha1():
+                    duplicates[d[0]].append(d[1])
 
-    t = BST(fs[0])
-    for f in fs[1:]:
-        d = t.insert(f)
-        if d:
-            if d[0].sha1() == d[1].sha1():
-                duplicates[d[0]].append(d[1])
+        for directory_object in directory_objects:
+            for file_object in directory_object.file_objects(
+                    show_hidden=True, recursive=True):
+                d = t.insert(file_object)
+                if d:
+                    if d[0].sha1() == d[1].sha1():
+                        duplicates[d[0]].append(d[1])
+
     return duplicates

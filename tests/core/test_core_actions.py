@@ -19,9 +19,9 @@ class TestActions(unittest.TestCase):
         l = [self.file1, self.file2, self.file3]
         result = calculate(l, 'md5')
         self.assertEqual(
-            result[self.file1], 'd41d8cd98f00b204e9800998ecf8427e')
+            result[self.file1], '3de8f8b0dc94b8c2230fab9ec0ba0506')
         self.assertEqual(
-            result[self.file2], 'd41d8cd98f00b204e9800998ecf8427e')
+            result[self.file2], '3de8f8b0dc94b8c2230fab9ec0ba0506')
         self.assertEqual(
             result[self.file3], 'aa019ff43c6fdfa1ceeebca9e4a19dfe')
         with self.assertRaises(TypeError):
@@ -30,8 +30,8 @@ class TestActions(unittest.TestCase):
     def test_verify(self):
         l = [self.file1, self.file2, self.file3]
         h = [
-            'd41d8cd98f00b204e9800998ecf8427e',
-            'd41d8cd98f00b204e9800998ecf8427d',
+            '3de8f8b0dc94b8c2230fab9ec0ba0506',
+            '3de8f8b0dc94b8c2230fab9ec0ba0503',
             'aa019ff43c6fdfa1ceeebca9e4a19dfe',
         ]
         result = verify(l, h)
@@ -47,7 +47,7 @@ class TestActions(unittest.TestCase):
 
     def test_find_duplicates(self):
         self.assertDictEqual(
-            dict(find_duplicates(self.directory)),
+            dict(find_duplicates([], [self.directory])),
             {self.file2: [self.file1]}
         )
         self.assertDictEqual(
@@ -55,9 +55,9 @@ class TestActions(unittest.TestCase):
                 self.file1,
                 self.file2,
                 self.file3,
-            ])),
+            ], [])),
             {self.file1: [self.file2]}
         )
         # Raises FileNotFoundError on non existent file
         with self.assertRaises(FileNotFoundError):
-            find_duplicates([FileObject('spam'), FileObject('eggs')])
+            find_duplicates([FileObject('spam'), FileObject('eggs')], [])

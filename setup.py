@@ -10,7 +10,7 @@ INSTALL_REQUIRES = (
     'tabulate>=0.8.3',
 )
 
-VERSION = '1.0.1'
+VERSION = '1.1'
 
 
 setuptools.setup(

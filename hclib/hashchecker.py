@@ -3,12 +3,11 @@ from os import path as os_path
 from shutil import get_terminal_size
 
 import click
-from colorama import Fore as fgc
-from tabulate import tabulate
-
 import hclib.help_strings as hs
+from colorama import Fore as fgc
 from hclib.core.core_actions import calculate, find_duplicates, verify
 from hclib.core.core_objects import CHECKSUMS, DirectoryObject, FileObject
+from tabulate import tabulate
 
 
 @click.group(
@@ -151,44 +150,19 @@ def cli_verify(arg_list):
     required=True,
     nargs=-1,
 )
-@click.option(
-    '-d', '--directory',
-    is_flag=True,
-    help=hs.find_duplicates_directory_help,
-)
-def cli_find_duplicates(arg_list, directory):
+def cli_find_duplicates(arg_list):
     duplicates = None
-    if directory:
-        if len(arg_list) > 1:
-            raise click.ClickException(
-                '- Please provide either a single directory or list of files.'
-                '\n- For more help, type hashchecker find_duplicates --help')
+    files = []
+    dirs = []
+    for arg in arg_list:
+        if os_path.isfile(arg):
+            files.append(FileObject(arg))
+        elif os_path.isdir(arg):
+            dirs.append(DirectoryObject(arg))
         else:
-            dir_object = DirectoryObject(arg_list[0])
-            if not dir_object.exists:
-                print(
-                    f"- I did not find a directory named '{dir_object.path}'")
-                exit(1)
-            print('+ Checking for duplicates files in the directory:',
-                  arg_list[0], flush=True)
-            duplicates = find_duplicates(DirectoryObject(arg_list[0]))
-    else:
-        try:
-            print('+ Checking for duplicates among the given files...')
-            list_of_file_objects = []
-            for arg in arg_list:
-                f = FileObject(arg)
-                if not f.exists:
-                    print(f"- I did not find a file named '{arg}'")
-                    continue
-                list_of_file_objects.append(f)
-            if not list_of_file_objects:
-                exit(1)
-            duplicates = find_duplicates(list_of_file_objects)
-        except IsADirectoryError as iade:
-            print(f'? Sorry, but {iade}\n'
-                  '? Please give -d option if you are specifying a directory')
-            exit(1)
+            print(f"- I did not find a file named '{arg}'")
+
+    duplicates = find_duplicates(files, dirs)
     if not duplicates:
         print(fgc.GREEN + '+ No duplicate files found!' + fgc.RESET)
     else:

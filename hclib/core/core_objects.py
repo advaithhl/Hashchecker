@@ -139,12 +139,14 @@ class DirectoryObject(FileSystemObject):
         """ Checks whether a directory is empty. """
         return not os_listdir(self.path)
 
-    def file_objects(self, show_hidden=False):
-        """ Return FileObject generator of every file in this directory. """
-        return (FileObject(os_path.join(self.path, fs_object))
-                for fs_object in os_listdir(self.path)
-                if os_path.isfile(os_path.join(self.path, fs_object))
-                and ((not fs_object.startswith('.')) or show_hidden))
+    def file_objects(self, show_hidden=False, recursive=False):
+        """ Return FileObject generator of every file (recursively). """
+        for dpath, dnames, filenames in os_walk(self.path):
+            for filename in filenames:
+                if ((not filename.startswith('.')) or show_hidden):
+                    yield FileObject(os_path.join(dpath, filename))
+            if not recursive:
+                break
 
     def directory_objects(self, show_hidden=False):
         """ Return DirectoryObject generator of every subdirectory. """
