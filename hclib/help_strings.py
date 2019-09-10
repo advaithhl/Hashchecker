@@ -21,8 +21,3 @@ Verify file integrity.
 find_duplicates_help = """
 Find duplicate file(s).
 """
-
-find_duplicates_directory_help = """
-Treat input as directory.
-(Only one directory can be given in one execution)
-"""
