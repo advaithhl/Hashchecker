@@ -4,14 +4,24 @@ from shutil import get_terminal_size
 
 import click
 import hclib.help_strings as hs
+import pkg_resources
 from colorama import Fore as fgc
 from hclib.core.core_actions import calculate, find_duplicates, verify
 from hclib.core.core_objects import CHECKSUMS, DirectoryObject, FileObject
 from tabulate import tabulate
 
 
+def get_version():
+    version = pkg_resources.require("hashchecker")[0].version
+    return version
+
+
 @click.group(
     help=hs.cli_help,
+)
+@click.version_option(
+    version=get_version(),
+    prog_name="Hashchecker"
 )
 def cli():
     """
