@@ -92,6 +92,12 @@ def cli_calculate(arg_list, checksums, hidden):
                 dir_result = calculate(d.file_objects(
                     show_hidden=hidden), checksum)
                 print(f'\r+ DIRECTORY: {d.path}' + ' ' * 22)
+                # dir_result might be empty if there aren't any files in d
+                if not dir_result:
+                    print(
+                        "\n\t- I didn't find any files here. "
+                        "Note that I did not traverse possible subdirectories.")
+                    continue
                 table = {
                     textwrap.fill(k.name, cols//2-4): textwrap.fill(v, cols//2-3)
                     for (k, v) in dir_result.items()
