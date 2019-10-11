@@ -10,10 +10,38 @@ from hclib.core.core_actions import calculate, find_duplicates, verify
 from hclib.core.core_objects import CHECKSUMS, DirectoryObject, FileObject
 from tabulate import tabulate
 
+cols, rows = get_terminal_size()
+
+
+def get_files_dirs(arg_list):
+    files = []
+    dirs = []
+    for arg in arg_list:
+        if os_path.isfile(arg):
+            files.append(FileObject(arg))
+        elif os_path.isdir(arg):
+            dirs.append(DirectoryObject(arg))
+        else:
+            print(f"- I did not find a file named '{arg}'")
+    return files, dirs
+
 
 def get_version():
     version = pkg_resources.require("hashchecker")[0].version
     return version
+
+
+def pretty_table_left(key):
+    return textwrap.fill(key, cols//2-4)
+
+
+def pretty_table_right(value):
+    return textwrap.fill(value, cols//2-3)
+
+
+def pretty_print(table, headers):
+    TABLE_FMT = 'fancy_grid'
+    print(tabulate(table.items(), headers, tablefmt=TABLE_FMT))
 
 
 @click.group(
@@ -59,16 +87,8 @@ def cli_calculate(arg_list, checksums, hidden):
     First, files and directories are classified into separate lists. Missing
     files and directories are reported.
     """
-    files = []
-    dirs = []
-    cols, rows = get_terminal_size()
-    for arg in arg_list:
-        if os_path.isfile(arg):
-            files.append(FileObject(arg))
-        elif os_path.isdir(arg):
-            dirs.append(DirectoryObject(arg))
-        else:
-            print(f"- I did not find a file named '{arg}'")
+    files, dirs = get_files_dirs(arg_list)
+    global cols, rows
     if files or dirs:
         for checksum in checksums:
             print('-' * ((cols-len(checksum))//2-1), end='')
@@ -82,10 +102,10 @@ def cli_calculate(arg_list, checksums, hidden):
                 result = calculate(files, checksum)
                 print('\r+ FILES' + ' ' * 39)
                 table = {
-                    textwrap.fill(k.name, cols//2-4): textwrap.fill(v, cols//2-3)
+                    pretty_table_left(k.name): pretty_table_right(v)
                     for (k, v) in result.items()
                 }
-                print(tabulate(table.items(), headers, tablefmt="fancy_grid"))
+                pretty_print(table, headers)
             for d in dirs:
                 print(
                     f'\n+ Calculating {checksum} of files in {d.path}...', end='', flush=True)
@@ -99,10 +119,10 @@ def cli_calculate(arg_list, checksums, hidden):
                         "Note that I did not traverse possible subdirectories.")
                     continue
                 table = {
-                    textwrap.fill(k.name, cols//2-4): textwrap.fill(v, cols//2-3)
+                    pretty_table_left(k.name): pretty_table_right(v)
                     for (k, v) in dir_result.items()
                 }
-                print(tabulate(table.items(), headers, tablefmt="fancy_grid"))
+                pretty_print(table, headers)
             print('-' * cols)
 
 
@@ -118,7 +138,7 @@ def cli_calculate(arg_list, checksums, hidden):
 def cli_verify(arg_list):
     print('+ I will automatically identify these checksums:', CHECKSUMS)
     print('+ Please enter any of the above checksum for each file\n')
-    cols, rows = get_terminal_size()
+    global cols, rows
     l = []
     correct_checksums = []
     for arg in arg_list:
@@ -151,10 +171,10 @@ def cli_verify(arg_list):
 
     headers = ['Filename', 'Status']
     table = {
-        textwrap.fill(k.name, cols//2-4): y_or_n(v)
+        pretty_table_left(k.name): pretty_table_right(y_or_n(v))
         for (k, v) in result.items()
     }
-    print(tabulate(table.items(), headers, tablefmt="fancy_grid"))
+    pretty_print(table, headers)
 
 
 @cli.command(
@@ -168,28 +188,19 @@ def cli_verify(arg_list):
 )
 def cli_find_duplicates(arg_list):
     duplicates = None
-    files = []
-    dirs = []
-    for arg in arg_list:
-        if os_path.isfile(arg):
-            files.append(FileObject(arg))
-        elif os_path.isdir(arg):
-            dirs.append(DirectoryObject(arg))
-        else:
-            print(f"- I did not find a file named '{arg}'")
-
+    files, dirs = get_files_dirs(arg_list)
+    global cols, rows
     duplicates = find_duplicates(files, dirs)
     if not duplicates:
         print(fgc.GREEN + '+ No duplicate files found!' + fgc.RESET)
     else:
         print(
             f'\n+ Found {fgc.RED + str(len(duplicates)) + fgc.RESET} cases of duplicate files.')
-    cols, rows = get_terminal_size()
     headers = ['Index', 'Duplicates']
     for (file_object, duplicates) in duplicates.items():
-        table = {
-            textwrap.fill(str(idx + 1), cols//2-4): textwrap.fill(f.path, cols//2-3)
-            for idx, f in enumerate(duplicates)
-        }
         print('\n+ File: ', file_object.path)
-        print(tabulate(table.items(), headers, tablefmt="fancy_grid"))
+        table = {
+            pretty_table_left(str(idx)): pretty_table_right(f.path)
+            for idx, f in enumerate(duplicates, start=1)
+        }
+        pretty_print(table, headers)
