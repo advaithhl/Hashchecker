@@ -80,7 +80,12 @@ def cli():
     is_flag=True,
     help=hs.calculate_hidden_help,
 )
-def cli_calculate(arg_list, checksums, hidden):
+@click.option(
+    '-t', '--plaintext',
+    is_flag=True,
+    help=hs.plaintext_help,
+)
+def cli_calculate(arg_list, checksums, hidden, plaintext):
     """
     CLI Interface of the `calculate` command.
 
@@ -94,18 +99,22 @@ def cli_calculate(arg_list, checksums, hidden):
             print('-' * ((cols-len(checksum))//2-1), end='')
             print(' '+checksum.upper()+' ', end='')
             print('-' * ((cols-len(checksum))//2-1))
-            headers = ['Filename', checksum.upper()]
             if files:
                 print(
                     f'\n+ Calculating {checksum} of given file(s)...',
                     end='', flush=True)
                 result = calculate(files, checksum)
                 print('\r+ FILES' + ' ' * 39)
-                table = {
-                    pretty_table_left(k.name): pretty_table_right(v)
-                    for (k, v) in result.items()
-                }
-                pretty_print(table, headers)
+                if plaintext:
+                    for (file_object, file_checksum) in result.items():
+                        print(f'{file_object.fspath}: {file_checksum}')
+                else:
+                    headers = ['Filename', checksum.upper()]
+                    table = {
+                        pretty_table_left(k.name): pretty_table_right(v)
+                        for (k, v) in result.items()
+                    }
+                    pretty_print(table, headers)
             for d in dirs:
                 print(
                     f'\n+ Calculating {checksum} of files in {d.path}...', end='', flush=True)
@@ -118,11 +127,15 @@ def cli_calculate(arg_list, checksums, hidden):
                         "\n\t- I didn't find any files here. "
                         "Note that I did not traverse possible subdirectories.")
                     continue
-                table = {
-                    pretty_table_left(k.name): pretty_table_right(v)
-                    for (k, v) in dir_result.items()
-                }
-                pretty_print(table, headers)
+                if plaintext:
+                    for (file_object, file_checksum) in dir_result.items():
+                        print(f'{file_object.name}: {file_checksum}')
+                else:
+                    table = {
+                        pretty_table_left(k.name): pretty_table_right(v)
+                        for (k, v) in dir_result.items()
+                    }
+                    pretty_print(table, headers)
             print('-' * cols)
 
 
@@ -135,7 +148,12 @@ def cli_calculate(arg_list, checksums, hidden):
     required=True,
     nargs=-1,
 )
-def cli_verify(arg_list):
+@click.option(
+    '-t', '--plaintext',
+    is_flag=True,
+    help=hs.plaintext_help,
+)
+def cli_verify(arg_list, plaintext):
     print('+ I will automatically identify these checksums:', CHECKSUMS)
     print('+ Please enter any of the above checksum for each file\n')
     global cols, rows
@@ -169,12 +187,16 @@ def cli_verify(arg_list):
             return fgc.GREEN + 'Valid' + fgc.RESET
         return fgc.RED + 'Corrupt' + fgc.RESET
 
-    headers = ['Filename', 'Status']
-    table = {
-        pretty_table_left(k.name): pretty_table_right(y_or_n(v))
-        for (k, v) in result.items()
-    }
-    pretty_print(table, headers)
+    if plaintext:
+        for (file_object, status) in result.items():
+            print(file_object.fspath + ': ' + y_or_n(status))
+    else:
+        headers = ['Filename', 'Status']
+        table = {
+            pretty_table_left(k.name): pretty_table_right(y_or_n(v))
+            for (k, v) in result.items()
+        }
+        pretty_print(table, headers)
 
 
 @cli.command(
@@ -186,7 +208,12 @@ def cli_verify(arg_list):
     required=True,
     nargs=-1,
 )
-def cli_find_duplicates(arg_list):
+@click.option(
+    '-t', '--plaintext',
+    is_flag=True,
+    help=hs.plaintext_help,
+)
+def cli_find_duplicates(arg_list, plaintext):
     duplicates = None
     files, dirs = get_files_dirs(arg_list)
     global cols, rows
@@ -195,12 +222,18 @@ def cli_find_duplicates(arg_list):
         print(fgc.GREEN + '+ No duplicate files found!' + fgc.RESET)
     else:
         print(
-            f'\n+ Found {fgc.RED + str(len(duplicates)) + fgc.RESET} cases of duplicate files.')
-    headers = ['Index', 'Duplicates']
-    for (file_object, duplicates) in duplicates.items():
-        print('\n+ File: ', file_object.path)
-        table = {
-            pretty_table_left(str(idx)): pretty_table_right(f.path)
-            for idx, f in enumerate(duplicates, start=1)
-        }
-        pretty_print(table, headers)
+            f'\n+ Found {fgc.RED + str(len(duplicates)) + fgc.RESET} case(s) of duplicate files.')
+        for (file_object, duplicates) in duplicates.items():
+            if plaintext:
+                print('\n+ File:', file_object.path)
+                for (idx, f) in enumerate(duplicates, start=1):
+                    print(f'{idx}. {f.path}')
+            else:
+                table = {
+                    pretty_table_left(str(idx)): pretty_table_right(f.path)
+                    for idx, f in enumerate(duplicates, start=1)
+                }
+                headers = ['Index', 'Duplicates']
+                pretty_print(table, headers)
+
+cli()

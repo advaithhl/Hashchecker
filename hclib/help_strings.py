@@ -14,6 +14,10 @@ calculate_hidden_help = """
 Include hidden files.
 """
 
+plaintext_help = """
+Print results in easy-to-copy plaintext.
+"""
+
 verify_help = """
 Verify file integrity.
 """
