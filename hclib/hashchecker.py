@@ -236,4 +236,6 @@ def cli_find_duplicates(arg_list, plaintext):
                 headers = ['Index', 'Duplicates']
                 pretty_print(table, headers)
 
-cli()
+
+if __name__ == '__main__':
+    cli()

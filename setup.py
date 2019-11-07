@@ -10,7 +10,8 @@ INSTALL_REQUIRES = (
     'tabulate>=0.8.3',
 )
 
-VERSION = '1.2'
+with open('VERSION', 'r') as vh:
+    VERSION = vh.read().strip()
 
 
 setuptools.setup(
