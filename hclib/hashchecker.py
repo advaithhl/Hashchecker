@@ -224,8 +224,8 @@ def cli_find_duplicates(arg_list, plaintext):
         print(
             f'\n+ Found {fgc.RED + str(len(duplicates)) + fgc.RESET} case(s) of duplicate files.')
         for (file_object, duplicates) in duplicates.items():
+            print('\n+ File:', file_object.path)
             if plaintext:
-                print('\n+ File:', file_object.path)
                 for (idx, f) in enumerate(duplicates, start=1):
                     print(f'{idx}. {f.path}')
             else:
