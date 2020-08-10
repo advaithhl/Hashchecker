@@ -1,0 +1,3 @@
+Multiple symlinks point to this file.
+The multiple symlinks must be detected as duplicate to each other.
+This file must not, however, be considered as a duplicate of any of the symlinks that point to this file.

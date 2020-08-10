@@ -14,6 +14,14 @@ class TestActions(unittest.TestCase):
             'tests/hashchecker_test_files/actions_test/.file3')
         self.directory = DirectoryObject(
             'tests/hashchecker_test_files/actions_test')
+        self.symdirectory = DirectoryObject(
+            'tests/hashchecker_test_files/symlinks')
+        self.symlink1 = FileObject(
+            'tests/hashchecker_test_files/symlinks/sym_link1')
+        self.symlink2 = FileObject(
+            'tests/hashchecker_test_files/symlinks/sym_link2')
+        self.symfile = FileObject(
+            'tests/hashchecker_test_files/symlinks/file.txt')
 
     def test_calculate(self):
         l = [self.file1, self.file2, self.file3]
@@ -61,3 +69,16 @@ class TestActions(unittest.TestCase):
         # Raises FileNotFoundError on non existent file
         with self.assertRaises(FileNotFoundError):
             find_duplicates([FileObject('spam'), FileObject('eggs')], [])
+
+        # Test if symlinks are treated as dupes of original file.
+        ret_val = dict(find_duplicates([self.symlink1], [self.symdirectory]))
+
+        # symlink1 is a duplicate of symlink1.
+        self.assertIn(self.symlink1, ret_val[self.symlink1])
+
+        # symlink2 is dup of symlink1, because they both point to same file.
+        self.assertIn(self.symlink2, ret_val[self.symlink1])
+
+        # symfile must not be a duplicate of any symbolic link which points
+        # to it.
+        self.assertNotIn(self.symfile, ret_val[self.symlink1])

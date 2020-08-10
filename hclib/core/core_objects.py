@@ -40,6 +40,11 @@ class FileSystemObject:
         return os_path.abspath(self.fspath)
 
     @property
+    def islink(self) -> bool:
+        """ Return whether or not self is a symbolic link """
+        return os_path.islink(self.path)
+
+    @property
     def exists(self) -> bool:
         """ Return whether the filesystem object exists """
         return os_path.exists(self.fspath)

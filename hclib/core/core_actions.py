@@ -92,7 +92,7 @@ def find_duplicates(file_objects, directory_objects):
         t = BST(FileObject(dummy_file.name))
         for file_object in file_objects:
             d = t.insert(file_object)
-            if d:
+            if d and not d[0].islink ^ d[1].islink:
                 if d[0].sha1() == d[1].sha1():
                     duplicates[d[0]].append(d[1])
 
@@ -100,7 +100,7 @@ def find_duplicates(file_objects, directory_objects):
             for file_object in directory_object.file_objects(
                     show_hidden=True, recursive=True):
                 d = t.insert(file_object)
-                if d:
+                if d and not d[0].islink ^ d[1].islink:
                     if d[0].sha1() == d[1].sha1():
                         duplicates[d[0]].append(d[1])
 
