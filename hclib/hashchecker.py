@@ -217,12 +217,14 @@ def cli_find_duplicates(arg_list, plaintext):
     duplicates = None
     files, dirs = get_files_dirs(arg_list)
     global cols, rows
+    print('\n+ Checking for duplicates... ', end='', flush=True)
     duplicates = find_duplicates(files, dirs)
+    print('Done!')
     if not duplicates:
         print(fgc.GREEN + '+ No duplicate files found!' + fgc.RESET)
     else:
         print(
-            f'\n+ Found {fgc.RED + str(len(duplicates)) + fgc.RESET} case(s) of duplicate files.')
+            f'+ Found {fgc.RED + str(len(duplicates)) + fgc.RESET} case(s) of duplicate files.')
         for (file_object, duplicates) in duplicates.items():
             print('\n+ File:', file_object.path)
             if plaintext:
